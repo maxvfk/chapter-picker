@@ -333,7 +333,20 @@ els.installBtn.addEventListener('click', async () => { if (!state.installPrompt)
 (async function init() {
   els.includeTitle.checked = safeGet('includeTitle') !== '0';
   els.promptText.value = safeGet('promptText') || DEFAULT_PROMPT;
-  if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('./service-worker.js').catch(() => {});
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    const hadController = Boolean(navigator.serviceWorker.controller);
+    let reloadingForUpdate = false;
+    if (hadController) {
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (reloadingForUpdate) return;
+        reloadingForUpdate = true;
+        window.location.reload();
+      });
+    }
+    navigator.serviceWorker.register('./service-worker.js')
+      .then(registration => registration.update().catch(() => {}))
+      .catch(() => {});
+  }
   const id = safeGet('currentBookId');
   if (id) {
     try {
