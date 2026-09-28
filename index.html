@@ -65,9 +65,13 @@
 
         <div id="largeWarning" class="warning hidden"></div>
 
+        <label class="toggle-row copy-toggle">
+          <input id="includePrompt" type="checkbox" checked />
+          <span>Добавлять prompt при копировании</span>
+        </label>
+
         <div class="actions">
           <button id="copyBtn" class="primary" type="button">Скопировать главу</button>
-          <button id="copyPromptBtn" class="secondary" type="button">Скопировать + prompt</button>
         </div>
 
         <div class="minor-actions">
@@ -86,7 +90,7 @@
             </label>
             <label class="field-label" for="promptText">Короткий prompt</label>
             <textarea id="promptText" rows="3">Переведи следующую главу, сохраняя установленный стиль и терминологию.</textarea>
-            <p class="hint">Используется только кнопкой «Скопировать + prompt».</p>
+            <p class="hint">Используется при копировании, когда включена галочка «Добавлять prompt при копировании».</p>
           </div>
         </details>
       </section>
