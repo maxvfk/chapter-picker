@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#111827" />
+  <meta name="color-scheme" content="light dark" />
+  <title>EPUB Chapter Picker</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon.svg" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <h1>EPUB Chapter Picker</h1>
+        <p class="subtitle">Следующая глава → буфер → ChatGPT</p>
+      </div>
+      <button id="installBtn" class="ghost hidden" type="button">Установить</button>
+    </header>
+
+    <section id="emptyState" class="card empty-state">
+      <div class="book-mark">EPUB</div>
+      <h2>Откройте книгу</h2>
+      <p>Файл разбирается локально на устройстве и никуда не загружается.</p>
+      <label class="primary file-button">
+        <input id="fileInput" type="file" accept=".epub,application/epub+zip" />
+        Выбрать EPUB
+      </label>
+    </section>
+
+    <section id="bookState" class="hidden">
+      <section class="card book-card">
+        <div class="book-info">
+          <div>
+            <div id="bookTitle" class="book-title">—</div>
+            <div id="bookAuthor" class="book-author"></div>
+          </div>
+          <label class="ghost file-button compact">
+            <input id="replaceFileInput" type="file" accept=".epub,application/epub+zip" />
+            Другая книга
+          </label>
+        </div>
+
+        <div class="chapter-nav-row">
+          <button id="prevBtn" class="nav-button" type="button" aria-label="Предыдущая глава">←</button>
+          <label class="chapter-select-wrap">
+            <span>Раздел</span>
+            <select id="chapterSelect"></select>
+          </label>
+          <button id="nextBtn" class="nav-button" type="button" aria-label="Следующая глава">→</button>
+        </div>
+
+        <div class="chapter-head">
+          <h2 id="chapterTitle">—</h2>
+          <div class="stats">
+            <span id="chapterPosition">—</span>
+            <span>•</span>
+            <span id="chapterChars">—</span>
+            <span>•</span>
+            <span id="chapterTokens">—</span>
+          </div>
+        </div>
+
+        <div id="largeWarning" class="warning hidden"></div>
+
+        <div class="actions">
+          <button id="copyBtn" class="primary" type="button">Скопировать главу</button>
+          <button id="copyPromptBtn" class="secondary" type="button">Скопировать + prompt</button>
+        </div>
+
+        <div class="minor-actions">
+          <button id="previewBtn" class="ghost" type="button">Предпросмотр</button>
+          <button id="copyNextBtn" class="ghost" type="button">Скопировать и перейти дальше</button>
+        </div>
+      </section>
+
+      <section class="card settings-card">
+        <details>
+          <summary>Настройки копирования</summary>
+          <div class="settings-content">
+            <label class="toggle-row">
+              <input id="includeTitle" type="checkbox" checked />
+              <span>Оставлять заголовок главы</span>
+            </label>
+            <label class="field-label" for="promptText">Короткий prompt</label>
+            <textarea id="promptText" rows="3">Переведи следующую главу, сохраняя установленный стиль и терминологию.</textarea>
+            <p class="hint">Используется только кнопкой «Скопировать + prompt».</p>
+          </div>
+        </details>
+      </section>
+    </section>
+  </main>
+
+  <dialog id="previewDialog">
+    <div class="dialog-head">
+      <div>
+        <h2 id="previewTitle">Предпросмотр</h2>
+        <div id="previewStats" class="stats"></div>
+      </div>
+      <button id="closePreviewBtn" class="ghost" type="button">Закрыть</button>
+    </div>
+    <pre id="previewText"></pre>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
