@@ -18,8 +18,8 @@ const els = {
   emptyState: $('emptyState'), bookState: $('bookState'), fileInput: $('fileInput'), replaceFileInput: $('replaceFileInput'),
   bookTitle: $('bookTitle'), bookAuthor: $('bookAuthor'), chapterSelect: $('chapterSelect'), chapterTitle: $('chapterTitle'),
   chapterPosition: $('chapterPosition'), chapterChars: $('chapterChars'), chapterTokens: $('chapterTokens'), largeWarning: $('largeWarning'),
-  prevBtn: $('prevBtn'), nextBtn: $('nextBtn'), copyBtn: $('copyBtn'), copyPromptBtn: $('copyPromptBtn'), copyNextBtn: $('copyNextBtn'),
-  includeTitle: $('includeTitle'), promptText: $('promptText'), previewBtn: $('previewBtn'), previewDialog: $('previewDialog'),
+  prevBtn: $('prevBtn'), nextBtn: $('nextBtn'), copyBtn: $('copyBtn'), copyNextBtn: $('copyNextBtn'),
+  includeTitle: $('includeTitle'), includePrompt: $('includePrompt'), promptText: $('promptText'), previewBtn: $('previewBtn'), previewDialog: $('previewDialog'),
   previewTitle: $('previewTitle'), previewStats: $('previewStats'), previewText: $('previewText'), closePreviewBtn: $('closePreviewBtn'), toast: $('toast'), installBtn: $('installBtn')
 };
 
@@ -279,11 +279,12 @@ async function importFile(file) {
   } catch (e) { alert(`Не удалось открыть EPUB:\n\n${e.message}`); }
 }
 
-async function copyCurrent(withPrompt = false, advance = false) {
+async function copyCurrent(advance = false) {
   try {
     const text = await chapterText(state.chapterIndex, els.includeTitle.checked);
     const prompt = els.promptText.value.trim();
-    const finalText = withPrompt && prompt ? `${prompt}\n\n${text}` : text;
+    const withPrompt = els.includePrompt.checked && Boolean(prompt);
+    const finalText = withPrompt ? `${prompt}\n\n${text}` : text;
     await copyText(finalText);
     showToast(withPrompt ? 'Глава + prompt скопированы' : 'Глава скопирована');
     if (advance && state.chapterIndex < state.book.toc.length - 1) { state.chapterIndex++; await renderChapter(); }
@@ -313,10 +314,10 @@ els.replaceFileInput.addEventListener('change', e => { const f = e.target.files?
 els.prevBtn.addEventListener('click', async () => { if (state.chapterIndex > 0) { state.chapterIndex--; await renderChapter(); } });
 els.nextBtn.addEventListener('click', async () => { if (state.chapterIndex < state.book.toc.length - 1) { state.chapterIndex++; await renderChapter(); } });
 els.chapterSelect.addEventListener('change', async () => { state.chapterIndex = Number(els.chapterSelect.value); await renderChapter(); });
-els.copyBtn.addEventListener('click', () => copyCurrent(false, false));
-els.copyPromptBtn.addEventListener('click', () => copyCurrent(true, false));
-els.copyNextBtn.addEventListener('click', () => copyCurrent(false, true));
+els.copyBtn.addEventListener('click', () => copyCurrent(false));
+els.copyNextBtn.addEventListener('click', () => copyCurrent(true));
 els.includeTitle.addEventListener('change', () => { safeSet('includeTitle', els.includeTitle.checked ? '1' : '0'); renderChapter(); });
+els.includePrompt.addEventListener('change', () => safeSet('includePrompt', els.includePrompt.checked ? '1' : '0'));
 els.promptText.addEventListener('input', () => safeSet('promptText', els.promptText.value));
 els.previewBtn.addEventListener('click', async () => {
   const text = await chapterText(state.chapterIndex, els.includeTitle.checked);
@@ -332,6 +333,7 @@ els.installBtn.addEventListener('click', async () => { if (!state.installPrompt)
 
 (async function init() {
   els.includeTitle.checked = safeGet('includeTitle') !== '0';
+  els.includePrompt.checked = safeGet('includePrompt') !== '0';
   els.promptText.value = safeGet('promptText') || DEFAULT_PROMPT;
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
     const hadController = Boolean(navigator.serviceWorker.controller);
