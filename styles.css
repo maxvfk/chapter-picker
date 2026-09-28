@@ -67,7 +67,8 @@ textarea { padding: 12px; resize: vertical; line-height: 1.4; }
   overflow: hidden;
 }
 .stats { color: var(--muted); font-size: .85rem; display: flex; gap: 7px; flex-wrap: wrap; }
-.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.actions { display: grid; grid-template-columns: 1fr; gap: 10px; }
+.copy-toggle { margin: 2px 2px 12px; }
 .actions button { min-height: 54px; }
 .minor-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
 .warning { margin: 0 0 14px; padding: 12px 14px; border-radius: 12px; background: var(--warning-bg); color: var(--warning-text); font-size: .9rem; line-height: 1.4; }
